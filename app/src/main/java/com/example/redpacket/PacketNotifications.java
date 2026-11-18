@@ -1,0 +1,6 @@
+package com.example.redpacket;
+import android.service.notification.*;import android.app.*;import android.os.*;import android.content.*;
+public class PacketNotifications extends NotificationListenerService {
+ private long last=0;
+ @Override public void onNotificationPosted(StatusBarNotification sbn){if(sbn==null||!"com.tencent.mm".equals(sbn.getPackageName()))return;if(!getSharedPreferences("MainActivity",0).getBoolean("enabled",false))return;Notification n=sbn.getNotification();if(n==null||n.extras==null)return;String s=String.valueOf(n.extras.getCharSequence(Notification.EXTRA_TEXT,""))+" "+String.valueOf(n.extras.getCharSequence(Notification.EXTRA_TITLE,""));if(!s.contains("红包")||System.currentTimeMillis()-last<1500)return;last=System.currentTimeMillis();android.app.KeyguardManager km=(android.app.KeyguardManager)getSystemService(KEYGUARD_SERVICE);if(km!=null&&km.isKeyguardLocked())return;try{if(n.contentIntent!=null)n.contentIntent.send();}catch(PendingIntent.CanceledException ignored){}}
+}
